@@ -1,0 +1,79 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  passwordHash  String?
+  name          String?
+  image         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  chats         Chat[]
+  projects      Project[]
+  repositories  Repository[]
+  settings      Settings?
+}
+
+model Settings {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme        String   @default("light")
+  defaultModel String   @default("ollama-llama3")
+  geminiApiKey String?
+  openaiApiKey String?
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  title     String    @default("New Chat")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  role      String   // "user" or "assistant"
+  content   String
+  model     String?
+  createdAt DateTime @default(now())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  folderPath  String?
+  zipUrl      String?
+  generated   String?  // SQLite does not support standard JSON type in older client setups, using String for max portability
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Repository {
+  id          String   @id @default(uuid())
+  name        String
+  repoUrl     String
+  summary     String?
+  techStack   String?  // Using String for SQLite compatibility
+  structure   String?  // Using String for SQLite compatibility
+  generated   String?  // Using String for SQLite compatibility
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
