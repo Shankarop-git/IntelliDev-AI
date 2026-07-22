@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import chat, code, github, project, settings
@@ -8,9 +9,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Parse CORS_ORIGINS from environment, fallback to localhost for local development
+cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3000")
+origins = [origin.strip() for origin in cors_origins_str.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Adjust in production, wildcards reject credentials
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
