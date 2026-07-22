@@ -23,7 +23,7 @@ import {
   Bot, Send, MessageCircle, AlertCircle, FileText, ArrowRight, ChevronDown, Maximize2, Minimize2
 } from 'lucide-react'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
-import { fetchModels, ModelItem } from '@/services/chat-service'
+import { fetchModels, LLMModel } from '@/services/chat-service'
 import {
   analyzeRepository,
   askRepositoryQA,
@@ -50,7 +50,7 @@ export default function GithubPage() {
   // ── States ──
   const [repoUrl, setRepoUrl] = useState('')
   const [model, setModel] = useState('groq:llama-3.3-70b-versatile')
-  const [models, setModels] = useState<ModelItem[]>([])
+  const [models, setModels] = useState<LLMModel[]>([])
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
